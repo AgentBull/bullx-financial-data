@@ -1,0 +1,56 @@
+# BullX Financial Data Skill
+
+BullX Financial Data is an agent skill for routing supported A-share financial-data tasks to the BullX Financial Data MCP server.
+
+The public repository contains only reusable skill instructions and MCP configuration templates. It must not contain a real Terminal endpoint, API key, filled `Authorization` header, private deployment URL, or user-specific config.
+
+## What This Skill Does
+
+Use this skill when an agent needs BullX-supported data such as:
+
+- A-share symbol resolution, stock names, pinyin, and fuzzy lookup.
+- Trading calendars, latest tradable dates, and market session checks.
+- Daily bars, latest daily snapshots, OHLCV, and supported period aggregation.
+- Factor snapshots, valuation, liquidity, capitalization, and moneyflow.
+- Financial statements, indicators, fundamentals, shareholders, and risk/compliance records.
+- Listed-company announcements, filings, and announcement details.
+- BullX parameter dictionaries and industry code decoding.
+
+The skill does not replace generic web search, news research, or unsupported markets. Use the MCP only for data covered by the visible `bullx_*` tools.
+
+## Public Files
+
+- `SKILL.md`: Core routing rules and tool-selection guidance for agents.
+- `llm.txt`: Agent-facing installation and verification instructions. Terminal-generated prompts should point agents here.
+- `agents/openai.yaml`: OpenAI/Codex metadata. It intentionally declares the MCP dependency without a concrete URL.
+- `agents/codex.mcp.template.toml`: Codex MCP config template.
+- `agents/claude-code.mcp.template.json`: Claude Code HTTP MCP config template.
+- `agents/kimi.mcp.template.json`: Kimi CLI MCP config template.
+- `agents/openclaw.mcp.template.json5`: OpenClaw MCP config template.
+
+## Installation Model
+
+Installation is deliberately split into two layers:
+
+1. Install or enable this public skill so the agent understands when and how to use BullX tools.
+2. Use Terminal's Financial Data MCP API Key page to generate private instance values and fill the local MCP config.
+
+Terminal should provide:
+
+```text
+process.env.BULLX_FINANCIAL_DATA_MCP_ENDPOINT="<terminal-origin>/api/v1/financial-data/mcp"
+process.env.BULLX_FINANCIAL_DATA_MCP_API_KEY="<user-api-key>"
+```
+
+Use these values only in the local agent runtime, local secret store, or local MCP config. Do not commit filled templates.
+
+## Verification
+
+After installation, restart or refresh the target agent's MCP discovery and verify:
+
+1. The MCP server is registered as `bullx-financial-data`.
+2. The agent can call `initialize` or `tools/list`.
+3. `tools/list` returns public `bullx_*` tools.
+4. A low-risk read-only probe, such as the China A-share trading calendar, succeeds.
+
+If tools are not visible, check the local endpoint, API key, protocol headers, and whether the agent process actually received the environment variables.

@@ -1,0 +1,16 @@
+{
+  mcp: {
+    servers: {
+      "bullx-financial-data": {
+        url: "${BULLX_FINANCIAL_DATA_MCP_ENDPOINT}",
+        transport: "streamable-http",
+        headers: {
+          Authorization: "Bearer ${BULLX_FINANCIAL_DATA_MCP_API_KEY}",
+          "MCP-Protocol-Version": "2025-11-25",
+          Accept: "application/json, text/event-stream",
+        },
+        supportsParallelToolCalls: true,
+      },
+    },
+  },
+}

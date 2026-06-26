@@ -1,0 +1,4 @@
+[mcp_servers."bullx-financial-data"]
+url = "${BULLX_FINANCIAL_DATA_MCP_ENDPOINT}"
+bearer_token_env_var = "BULLX_FINANCIAL_DATA_MCP_API_KEY"
+http_headers = { "MCP-Protocol-Version" = "2025-11-25", "Accept" = "application/json, text/event-stream" }
