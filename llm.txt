@@ -31,7 +31,7 @@ bullx-financial-data
 
 ## Register The MCP Server
 
-Use Streamable HTTP transport with these headers:
+Use Streamable HTTP transport. Generic HTTP MCP clients that require manual headers need:
 
 ```text
 url: ${BULLX_FINANCIAL_DATA_MCP_ENDPOINT}
@@ -45,6 +45,8 @@ For Codex CLI, prefer:
 ```bash
 codex mcp add bullx-financial-data --url "<terminal-origin>/api/v1/financial-data/mcp" --bearer-token-env-var BULLX_FINANCIAL_DATA_MCP_API_KEY
 ```
+
+Do not manually add `MCP-Protocol-Version` in Codex `http_headers`. Codex sends MCP transport headers during protocol negotiation; adding a fixed value can produce a merged duplicate header such as `2025-11-25, 2025-06-18`, causing `tools/list` startup failures. If an existing Codex config has this header, remove it and restart Codex discovery.
 
 Make sure `BULLX_FINANCIAL_DATA_MCP_API_KEY` is exported in the shell or launcher that starts Codex. A value stored only in a project `.env.local` file is not visible to Codex unless the launcher loads it.
 

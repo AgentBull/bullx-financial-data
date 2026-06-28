@@ -46,6 +46,8 @@ Use these values only in the local agent runtime, local secret store, or local M
 
 For Codex CLI, prefer registering the endpoint with `codex mcp add --url <endpoint> --bearer-token-env-var BULLX_FINANCIAL_DATA_MCP_API_KEY`.
 The URL should be the concrete Terminal URL for that environment. The API key should stay in an environment variable or local secret store, and the shell or launcher that starts Codex must actually export that variable.
+Do not manually add `MCP-Protocol-Version` in Codex `http_headers`; Codex sends MCP transport headers during negotiation, and a manual value can be merged into a duplicate header that breaks `tools/list`.
+If an existing Codex config has `http_headers = { "MCP-Protocol-Version" = ... }` for this server, remove that header and restart Codex discovery.
 
 ## Verification
 
