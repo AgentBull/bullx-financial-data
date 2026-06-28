@@ -1,4 +1,6 @@
 [mcp_servers."bullx-financial-data"]
+# Replace this placeholder with the concrete Terminal URL before copying the template into Codex config.
+# Use bearer_token_env_var for the secret, and make sure the shell or launcher that starts Codex exports it.
 url = "${BULLX_FINANCIAL_DATA_MCP_ENDPOINT}"
 bearer_token_env_var = "BULLX_FINANCIAL_DATA_MCP_API_KEY"
 http_headers = { "MCP-Protocol-Version" = "2025-11-25", "Accept" = "application/json, text/event-stream" }

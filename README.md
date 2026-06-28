@@ -44,6 +44,9 @@ process.env.BULLX_FINANCIAL_DATA_MCP_API_KEY="<user-api-key>"
 
 Use these values only in the local agent runtime, local secret store, or local MCP config. Do not commit filled templates.
 
+For Codex CLI, prefer registering the endpoint with `codex mcp add --url <endpoint> --bearer-token-env-var BULLX_FINANCIAL_DATA_MCP_API_KEY`.
+The URL should be the concrete Terminal URL for that environment. The API key should stay in an environment variable or local secret store, and the shell or launcher that starts Codex must actually export that variable.
+
 ## Verification
 
 After installation, restart or refresh the target agent's MCP discovery and verify:
@@ -51,6 +54,7 @@ After installation, restart or refresh the target agent's MCP discovery and veri
 1. The MCP server is registered as `bullx-financial-data`.
 2. The agent can call `initialize` or `tools/list`.
 3. `tools/list` returns public `bullx_*` tools.
-4. A low-risk read-only probe, such as the China A-share trading calendar, succeeds.
+4. `resources/list` and `prompts/list` may return empty lists; financial data is exposed through tools, not through resources or reusable MCP prompts.
+5. A low-risk read-only probe, such as the China A-share trading calendar, succeeds.
 
 If tools are not visible, check the local endpoint, API key, protocol headers, and whether the agent process actually received the environment variables.

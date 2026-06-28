@@ -73,6 +73,8 @@ Expected MCP registration:
 
 Keep API keys and instance-specific URLs out of repositories, reports, scripts, and shared skill files. The MCP config should reference environment variables such as `BULLX_FINANCIAL_DATA_MCP_ENDPOINT` and `BULLX_FINANCIAL_DATA_MCP_API_KEY` when the target agent supports them.
 
+For Codex CLI, the safest setup is to register the concrete endpoint URL with `codex mcp add --url` and keep only the API key behind `bearer_token_env_var`. Do not assume every Codex version expands `${...}` inside the URL field. Also confirm the shell or app launcher that starts Codex actually exports the API key variable; having it only in a project `.env.local` file is not enough.
+
 If the target agent does not expand environment variables inside MCP config headers, keep the generated `Authorization` header in that agent's local secret/header store. Never commit a filled config containing a real endpoint for a private deployment or a real API key.
 
 ## Verification
@@ -82,5 +84,6 @@ When the MCP is newly configured or a call fails:
 1. Check `codex mcp get bullx-financial-data` or the equivalent MCP registration in the current agent.
 2. Confirm the API key environment variable is present in the process that starts Codex.
 3. Run `tools/list` or use tool discovery to confirm `bullx_*` tools are visible.
-4. Make a low-risk read-only probe, such as `bullx_market_data_get_trading_calendar` for `cn_ashare`.
-5. If tools are still invisible after configuration is correct, restart the Codex session so MCP discovery reloads.
+4. Treat empty `resources/list` and `prompts/list` results as normal. The business surface is `tools/list` and `tools/call`.
+5. Make a low-risk read-only probe, such as `bullx_market_data_get_trading_calendar` for `cn_ashare`.
+6. If tools are still invisible after configuration is correct, restart the Codex session so MCP discovery reloads.

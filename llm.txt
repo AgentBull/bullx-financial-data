@@ -40,6 +40,14 @@ MCP-Protocol-Version: 2025-11-25
 Accept: application/json, text/event-stream
 ```
 
+For Codex CLI, prefer:
+
+```bash
+codex mcp add bullx-financial-data --url "<terminal-origin>/api/v1/financial-data/mcp" --bearer-token-env-var BULLX_FINANCIAL_DATA_MCP_API_KEY
+```
+
+Make sure `BULLX_FINANCIAL_DATA_MCP_API_KEY` is exported in the shell or launcher that starts Codex. A value stored only in a project `.env.local` file is not visible to Codex unless the launcher loads it.
+
 Choose the template that matches the target agent:
 
 - Codex: `agents/codex.mcp.template.toml`
@@ -72,5 +80,6 @@ Then verify:
 
 1. `initialize` succeeds.
 2. `tools/list` returns `bullx_*` tools.
-3. A low-risk read-only call, such as a China A-share trading-calendar query, succeeds.
-4. If the tool call fails, check endpoint reachability, API key status, protocol headers, and whether the agent process actually received the environment variables.
+3. `resources/list` and `prompts/list` may return empty lists. This is expected because BullX financial data is exposed through tools.
+4. A low-risk read-only call, such as a China A-share trading-calendar query, succeeds.
+5. If the tool call fails, check endpoint reachability, API key status, protocol headers, and whether the agent process actually received the environment variables.
