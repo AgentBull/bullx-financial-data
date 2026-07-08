@@ -11,12 +11,17 @@ Use this skill when an agent needs BullX-supported data such as:
 - A-share symbol resolution, stock names, pinyin, and fuzzy lookup.
 - Trading calendars, latest tradable dates, and market session checks.
 - Daily bars, latest daily snapshots, OHLCV, and supported period aggregation.
+- Market breadth, market temperature, advance/decline counts, and intraday trading-activity proxies.
+- Realtime A-share stock quote snapshots.
 - Factor snapshots, valuation, liquidity, capitalization, and moneyflow.
+- Index profiles, daily bars, constituents, weights, and quotes.
+- ETF/LOF/exchange-traded fund quotes, minute bars, daily bars, public mutual fund profiles, and fund holdings.
+- Macro or industry-economics indicator resolution and time series.
 - Financial statements, indicators, fundamentals, shareholders, and risk/compliance records.
 - Listed-company announcements, filings, and announcement details.
 - BullX parameter dictionaries and industry code decoding.
 
-The skill does not replace generic web search, news research, or unsupported markets. Use the MCP only for data covered by the visible `bullx_*` tools.
+The skill does not replace generic web search, news research, unsupported markets, A-share stock minute bars, order book/tick data, real-time moneyflow, northbound flow, or announcement full-text extraction. Use the MCP only for data covered by the visible `bullx_*` tools.
 
 ## Public Files
 

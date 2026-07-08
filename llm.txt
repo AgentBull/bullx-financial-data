@@ -67,12 +67,17 @@ Use BullX MCP for:
 - A-share symbol resolution, fuzzy stock lookup, and pinyin/name matching.
 - Trading calendar, latest tradable date, and session checks.
 - Daily bars, latest daily snapshots, OHLCV, and supported aggregations.
+- Market breadth, market temperature, advance/decline counts, and intraday trading-activity proxies.
+- Realtime A-share stock quote snapshots.
 - Factor snapshots, valuation, liquidity, capitalization, and moneyflow.
+- Index profiles, daily bars, constituents, weights, and quotes.
+- ETF/LOF/exchange-traded fund quotes, minute bars, daily bars, public mutual fund profiles, and fund holdings.
+- Macro or industry-economics indicator resolution and time series.
 - Financial statements, indicators, fundamentals, shareholders, and risk/compliance facts.
 - Listed-company announcements, filings, and announcement details.
 - BullX parameter dictionary and industry-code decoding.
 
-Before drawing conclusions, inspect `warnings`, `sources`, `meta`, row counts, date fields, freshness, adjustment basis, and partial-result indicators.
+Before drawing conclusions, inspect `warnings`, `sources`, `meta`, row counts, date fields, freshness, adjustment basis, and partial-result indicators. Treat current-day stock daily snapshots as daily snapshots, not stock minute bars. Treat intraday activity as a turnover/return proxy, not real-time moneyflow, main-fund inflow, or northbound flow.
 
 ## Verify
 
