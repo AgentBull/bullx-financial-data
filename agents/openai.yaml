@@ -1,12 +1,12 @@
 interface:
   display_name: "BullX Financial Data"
-  short_description: "Route BullX financial-data tasks to BullX MCP"
-  default_prompt: "Use $bullx-financial-data to identify BullX financial-data requests and call the correct bullx_* MCP tool."
+  short_description: "Route BullX data and simulator MCP tools"
+  default_prompt: "Use $bullx-financial-data to identify BullX financial-data or market-simulator requests and call the correct bullx_* MCP tool."
 dependencies:
   tools:
     - type: "mcp"
       value: "bullx-financial-data"
-      description: "BullX Financial Data MCP server with bullx_* tools for A-share market data, market breadth, realtime quotes, factors, fundamentals, index data, ETF/fund data, macro series, filings, and reference data."
+      description: "BullX Financial Data MCP server with bullx_* tools for A-share reference data, active universes, daily and historical minute OHLCV, market breadth, realtime quotes, factors, fundamentals, index data, ETF/fund data, macro series, filings, and permission-scoped market-simulator reads and writes."
       transport: "streamable_http"
 policy:
   allow_implicit_invocation: true

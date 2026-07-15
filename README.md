@@ -1,6 +1,6 @@
 # BullX Financial Data Skill
 
-BullX Financial Data is an agent skill for routing supported A-share financial-data tasks to the BullX Financial Data MCP server.
+BullX Financial Data is an agent skill for routing supported A-share financial-data and market-simulator tasks to the BullX Financial Data MCP server.
 
 The public repository contains only reusable skill instructions and MCP configuration templates. It must not contain a real Terminal endpoint, API key, filled `Authorization` header, private deployment URL, or user-specific config.
 
@@ -9,19 +9,23 @@ The public repository contains only reusable skill instructions and MCP configur
 Use this skill when an agent needs BullX-supported data such as:
 
 - A-share symbol resolution, stock names, pinyin, and fuzzy lookup.
+- Point-in-time A-share stock and index universes for screening, validation, and backtest inputs.
 - Trading calendars, latest tradable dates, and market session checks.
-- Daily bars, latest daily snapshots, OHLCV, and supported period aggregation.
+- Daily bars, latest daily snapshots, historical A-share stock minute OHLCV, and supported period aggregation.
 - Market breadth, market temperature, advance/decline counts, and intraday trading-activity proxies.
 - Realtime A-share stock quote snapshots.
 - Factor snapshots, valuation, liquidity, capitalization, and moneyflow.
 - Index profiles, daily bars, constituents, weights, and quotes.
-- ETF/LOF/exchange-traded fund quotes, minute bars, daily bars, public mutual fund profiles, and fund holdings.
+- ETF/LOF/exchange-traded fund quotes, single-fund minute/daily bars, batch ETF minute/daily OHLCV, public mutual fund profiles, and fund holdings.
 - Macro or industry-economics indicator resolution and time series.
 - Financial statements, indicators, fundamentals, shareholders, and risk/compliance records.
 - Listed-company announcements, filings, and announcement details.
 - BullX parameter dictionaries and industry code decoding.
+- Market-simulator account discovery, current holdings, holding-change events, daily performance, private-account creation, and target-weight rebalancing.
 
-The skill does not replace generic web search, news research, unsupported markets, A-share stock minute bars, order book/tick data, real-time moneyflow, northbound flow, or announcement full-text extraction. Use the MCP only for data covered by the visible `bullx_*` tools.
+The current reference manifest is `2026-07-15.3` with 37 registered public `bullx_*` tools. `tools/list` is API-key-scope-aware: a financial-data-only key sees 31 tools, a key with `market_simulator:read` sees 35, and a key with both simulator read and write scopes sees all 37. If a runtime differs from the count expected for its scopes, trust the runtime surface for that session and report the mismatch.
+
+The skill does not replace generic web search, news research, unsupported markets, real brokerage accounts or order execution, order book/tick data, real-time moneyflow, northbound flow, realtime quote semantics for historical OHLCV tools, ETF/fund active-universe lookup, or announcement full-text extraction. Use the MCP only for data and simulator operations covered by the visible `bullx_*` tools.
 
 ## Public Files
 
@@ -60,8 +64,8 @@ After installation, restart or refresh the target agent's MCP discovery and veri
 
 1. The MCP server is registered as `bullx-financial-data`.
 2. The agent can call `initialize` or `tools/list`.
-3. `tools/list` returns public `bullx_*` tools.
+3. `tools/list` returns the public `bullx_*` tools allowed by the API key: 31 for financial data only, 35 with simulator read, or 37 with simulator read and write.
 4. `resources/list` and `prompts/list` may return empty lists; financial data is exposed through tools, not through resources or reusable MCP prompts.
 5. A low-risk read-only probe, such as the China A-share trading calendar, succeeds.
 
-If tools are not visible, check the local endpoint, API key, protocol headers, and whether the agent process actually received the environment variables.
+If simulator tools are not visible, first check the key's simulator read/write scopes. For other visibility failures, check the local endpoint, API key, protocol headers, and whether the agent process actually received the environment variables.

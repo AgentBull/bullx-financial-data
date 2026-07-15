@@ -1,6 +1,6 @@
 # BullX Financial Data Agent Install Guide
 
-You are installing the public `bullx-financial-data` skill and connecting it to a private Terminal Financial Data MCP endpoint.
+You are installing the public `bullx-financial-data` skill and connecting it to a private Terminal Financial Data MCP endpoint for financial-data and market-simulator tasks.
 
 Follow this separation strictly:
 
@@ -65,19 +65,35 @@ For local installation, copy the matching template into the target agent's local
 Use BullX MCP for:
 
 - A-share symbol resolution, fuzzy stock lookup, and pinyin/name matching.
+- Point-in-time A-share stock and index universes for screening, validation, backtest inputs, and data-quality checks.
 - Trading calendar, latest tradable date, and session checks.
-- Daily bars, latest daily snapshots, OHLCV, and supported aggregations.
+- Daily bars, latest daily snapshots, historical A-share stock minute OHLCV, and supported aggregations.
 - Market breadth, market temperature, advance/decline counts, and intraday trading-activity proxies.
 - Realtime A-share stock quote snapshots.
 - Factor snapshots, valuation, liquidity, capitalization, and moneyflow.
 - Index profiles, daily bars, constituents, weights, and quotes.
-- ETF/LOF/exchange-traded fund quotes, minute bars, daily bars, public mutual fund profiles, and fund holdings.
+- ETF/LOF/exchange-traded fund quotes, single-fund minute/daily bars, batch ETF minute/daily OHLCV, public mutual fund profiles, and fund holdings.
 - Macro or industry-economics indicator resolution and time series.
 - Financial statements, indicators, fundamentals, shareholders, and risk/compliance facts.
 - Listed-company announcements, filings, and announcement details.
 - BullX parameter dictionary and industry-code decoding.
+- Accessible simulator accounts, current holdings, holding-change events, and daily performance.
+- Explicitly requested private simulator creation and target-weight rebalancing when the API key has simulator write permission.
 
-Before drawing conclusions, inspect `warnings`, `sources`, `meta`, row counts, date fields, freshness, adjustment basis, and partial-result indicators. Treat current-day stock daily snapshots as daily snapshots, not stock minute bars. Treat intraday activity as a turnover/return proxy, not real-time moneyflow, main-fund inflow, or northbound flow.
+Current reference manifest: `2026-07-15.3`, 37 registered public tools. `tools/list` is scope-filtered: financial-data-only keys see 31 tools, simulator-read keys see 35, and simulator-read-write keys see all 37. If the visible count differs from what the key scopes should expose, trust the runtime surface for that session and mention the mismatch.
+
+Before drawing conclusions, inspect `warnings`, `sources`, `meta`, row counts, date fields, freshness, adjustment basis, and partial-result indicators. Treat current-day stock daily snapshots as daily snapshots, not stock minute bars. Treat intraday activity as a turnover/return proxy, not real-time moneyflow, main-fund inflow, or northbound flow. Treat Quant-backed OHLCV tools as overnight batch-updated historical data; for latest price or realtime percent change, use the stock realtime quote or fund quote tools instead.
+
+## Market Simulator Contract
+
+- Use `bullx_market_simulator_list_accounts` to discover accounts readable by the API-key user: owned, public under Terminal's existing rule, or published ITBT accounts. Use the detail tools for synchronously refreshed facts.
+- Use `bullx_market_simulator_get_current_holdings`, `bullx_market_simulator_get_holding_changes`, and `bullx_market_simulator_get_performance` for holdings, buy/sell/T+1/corporate-action events, and the daily equity/return curve. Inspect `data_as_of` and `calculated_at`.
+- Never send `userId` or `user_id`. Inaccessible accounts return `NOT_FOUND`, and public or ITBT visibility never grants write access.
+- Use `bullx_market_simulator_create_account` only for an explicit request. Supply `name`, numeric `initial_cash`, one zoned `buy_time`, and `initial_positions[{symbol,target_weight,buy_price}]`; weights and prices are JSON numbers, and quantities are not accepted. The server validates the time and prices with simulator trading rules, rounds down to whole lots after fees, keeps residual cash, and creates a private account for the API-key user.
+- Use `bullx_market_simulator_rebalance_account` only for an explicit request on the API-key user's private simulator. Supply `account_id`, a zoned `rebalance_time`, and `target_positions[{symbol,target_weight,price}]` covering the full union of current and target symbols; weights and prices are JSON numbers, and `target_weight=0` exits a symbol. The server validates the time and prices, derives quantities, and executes sells before buys.
+- Simulator writes are not idempotent. Do not send `expected_plan_hash` or `idempotency_key`. After a timeout or ambiguous error, read back accounts and trade-derived holding changes before retrying; an error does not prove that no write committed.
+- Successful writes expose `meta.mutation_source="mcp"`, the account ID, and trade IDs. On write errors, inspect `meta.mutation_committed` and any durable IDs before retrying. Keep request IDs, warnings, and sources when reporting the result.
+- For scheduled event-impact analysis, combine simulator holdings with announcement, risk/compliance, fundamentals, and market-data tools. Scheduling and impact reasoning remain the external agent's responsibility.
 
 ## Verify
 
@@ -86,7 +102,7 @@ After configuring MCP, restart or refresh the target agent's MCP discovery.
 Then verify:
 
 1. `initialize` succeeds.
-2. `tools/list` returns `bullx_*` tools.
+2. `tools/list` returns the `bullx_*` tools permitted by the key: 31 for financial data only, 35 with simulator read, or 37 with simulator read and write.
 3. `resources/list` and `prompts/list` may return empty lists. This is expected because BullX financial data is exposed through tools.
 4. A low-risk read-only call, such as a China A-share trading-calendar query, succeeds.
-5. If the tool call fails, check endpoint reachability, API key status, protocol headers, and whether the agent process actually received the environment variables.
+5. If simulator tools are missing, check the key's simulator scopes. If a tool call fails, check endpoint reachability, API key status, protocol headers, and whether the agent process actually received the environment variables.
